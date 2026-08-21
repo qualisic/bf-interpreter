@@ -34,8 +34,10 @@ end
 while p <= #code do
     if code:sub(p, p) == "+" then
         tape[mp] = tape[mp] + 1
+        tape[mp] = tape[mp] % 256
     elseif code:sub(p, p) == "-" then
         tape[mp] = tape[mp] - 1
+        tape[mp] = tape[mp] % 256
     elseif code:sub(p, p) == ">" then
         mp = mp + 1
         if mp == 30001 then
@@ -67,6 +69,5 @@ while p <= #code do
             end
         end
     end
-    tape[mp] = tape[mp] % 256
     p = p + 1
 end
