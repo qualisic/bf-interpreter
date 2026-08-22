@@ -25,8 +25,7 @@ for i = 1, #code do
     if code:sub(i, i) == "[" then
         table.insert(openLoops, i)
     elseif code:sub(i, i) == "]" then
-        local lastLoop = table.remove(openLoops)
-        table.insert(loops, { lastLoop, i })
+        loops[table.remove(openLoops)] = i
     end
 end
 
@@ -40,14 +39,10 @@ while p <= #code do
         tape[mp] = tape[mp] % 256
     elseif code:sub(p, p) == ">" then
         mp = mp + 1
-        if mp == 30001 then
-            mp = 1
-        end
+        mp = mp % 30000
     elseif code:sub(p, p) == "<" then
         mp = mp - 1
-        if mp == 0 then
-            mp = 30000
-        end
+        mp = mp % 30000
     elseif code:sub(p, p) == "," then
         tape[mp] = string.byte(io.read(1))
     elseif code:sub(p, p) == "." then
@@ -55,19 +50,22 @@ while p <= #code do
     elseif code:sub(p, p) == "[" then
         if tape[mp] == 0 then
             for i, v in pairs(loops) do
-                if v[1] == p then
-                    p = v[2]
+                if i == p then
+                    p = v
+                    goto continue
                 end
             end
         end
     elseif code:sub(p, p) == "]" then
         if tape[mp] ~= 0 then
             for i, v in pairs(loops) do
-                if v[2] == p then
-                    p = v[1]
+                if v == p then
+                    p = i
+                    goto continue
                 end
             end
         end
     end
+    ::continue::
     p = p + 1
 end
